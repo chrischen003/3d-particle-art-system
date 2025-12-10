@@ -20,38 +20,40 @@ function init() {
     scene.background = new THREE.Color(0x000000);
     scene.fog = new THREE.FogExp2(0x000000, 0.001);
 
-    // Create camera
+    // Create camera - 调整相机位置以更好地看到粒子
     camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
         0.1,
         1000
     );
-    camera.position.z = 5;
+    camera.position.set(0, 0, 8);  // 从 z=5 调整到 z=8
 
     // Create renderer
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));  // 限制像素比
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
     // Add orbit controls
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.minDistance = 2;
-    controls.maxDistance = 10;
+    controls.minDistance = 3;  // 从 2 调整到 3
+    controls.maxDistance = 20;  // 从 10 调整到 20
 
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Add lights - 增强环境光
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);  // 从 0.5 增加到 0.8
     scene.add(ambientLight);
-    const pointLight = new THREE.PointLight(0xffffff, 1);
+    const pointLight = new THREE.PointLight(0xffffff, 1.5);  // 从 1 增加到 1.5
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
 
     // Initialize with snowflake
     currentConfig = JSON.parse(JSON.stringify(particleConfigs.snowflake));
     particleSystem = new ParticleSystem(scene, currentConfig);
+    
+    console.log('✅ Particle system created with config:', currentConfig);
 
     // Initialize AI components
     promptEngine = new PromptEngine();

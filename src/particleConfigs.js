@@ -4,9 +4,9 @@ export const particleConfigs = {
         count: 5000,
         appearance: {
             color: '#ffffff',
-            size: 0.05,
+            size: 0.15,  // 增大从 0.05 到 0.15
             material: 'glossy',
-            opacity: 0.8
+            opacity: 0.9  // 增强不透明度
         },
         physics: {
             speed: 0.02,
@@ -24,10 +24,10 @@ export const particleConfigs = {
         type: 'smoke',
         count: 8000,
         appearance: {
-            color: '#888888',
-            size: 0.08,
+            color: '#cccccc',  // 更亮的烟雾
+            size: 0.2,  // 增大从 0.08 到 0.2
             material: 'matte',
-            opacity: 0.4
+            opacity: 0.6  // 增强不透明度
         },
         physics: {
             speed: 0.03,
@@ -46,7 +46,7 @@ export const particleConfigs = {
         count: 3000,
         appearance: {
             color: '#ff00ff',
-            size: 0.04,
+            size: 0.12,  // 增大从 0.04 到 0.12
             material: 'emissive',
             opacity: 1.0
         },
@@ -67,9 +67,9 @@ export const particleConfigs = {
         count: 10000,
         appearance: {
             color: '#00ffff',
-            size: 0.03,
+            size: 0.1,  // 增大从 0.03 到 0.1
             material: 'glossy',
-            opacity: 0.9
+            opacity: 0.95  // 增强不透明度
         },
         physics: {
             speed: 0.1,
@@ -88,9 +88,9 @@ export const particleConfigs = {
         count: 8000,
         appearance: {
             color: '#ffff00',
-            size: 0.04,
+            size: 0.12,  // 增大从 0.04 到 0.12
             material: 'matte',
-            opacity: 0.85
+            opacity: 0.9  // 增强不透明度
         },
         physics: {
             speed: 0.05,

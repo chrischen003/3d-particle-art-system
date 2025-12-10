@@ -17,8 +17,8 @@ const vertexShader = `
         
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         
-        // Size attenuation (particles get smaller with distance)
-        float sizeAttenuation = 300.0 / -mvPosition.z;
+        // 增强尺寸衡减，让粒子更明显
+        float sizeAttenuation = 500.0 / -mvPosition.z;  // 从 300.0 增加到 500.0
         
         gl_PointSize = aSize * uSize * sizeAttenuation;
         gl_Position = projectionMatrix * mvPosition;
@@ -49,7 +49,10 @@ const snowflakeFragmentShader = `
         // Add sparkle
         float sparkle = sin(uTime * 3.0 + vRandom * 10.0) * 0.3 + 0.7;
         
-        gl_FragColor = vec4(uColor * sparkle, alpha);
+        // 增强亮度
+        vec3 brightColor = uColor * (sparkle * 1.2);
+        
+        gl_FragColor = vec4(brightColor, alpha);
     }
 `;
 
@@ -71,7 +74,7 @@ const smokeFragmentShader = `
         alpha *= uOpacity;
         
         // Fade with height
-        alpha *= 1.0 - (vPosition.y / 10.0);
+        alpha *= max(0.3, 1.0 - (vPosition.y / 10.0));  // 添加最小不透明度
         
         // Turbulent opacity
         float turbulence = sin(uTime + vRandom * 20.0) * 0.2 + 0.8;
@@ -104,11 +107,11 @@ const fireworkFragmentShader = `
         float pulse = sin(uTime * 5.0 + vRandom * 6.28) * 0.3 + 0.7;
         
         // Distance fade
-        float distFade = 1.0 - length(vPosition) / 5.0;
+        float distFade = max(0.3, 1.0 - length(vPosition) / 5.0);  // 添加最小不透明度
         alpha *= distFade * pulse;
         
         // Bright emissive color
-        vec3 color = uColor * (1.5 + pulse * 0.5);
+        vec3 color = uColor * (2.0 + pulse * 0.5);  // 增强亮度
         
         gl_FragColor = vec4(color, alpha);
     }
@@ -127,12 +130,15 @@ const basicFragmentShader = `
         vec2 center = gl_PointCoord - 0.5;
         float dist = length(center);
         
-        float alpha = smoothstep(0.5, 0.3, dist) * uOpacity;
+        float alpha = smoothstep(0.5, 0.2, dist) * uOpacity;  // 调整边缘
         
         // Subtle pulse
         float pulse = sin(uTime * 2.0 + vRandom * 6.28) * 0.2 + 0.8;
         
-        gl_FragColor = vec4(uColor * pulse, alpha);
+        // 增强亮度
+        vec3 brightColor = uColor * (pulse * 1.3);
+        
+        gl_FragColor = vec4(brightColor, alpha);
     }
 `;
 
@@ -156,7 +162,7 @@ export function getShaderMaterial(type, appearance) {
     return new THREE.ShaderMaterial({
         uniforms: {
             uTime: { value: 0 },
-            uSize: { value: appearance.size * 100 },
+            uSize: { value: appearance.size * 150 },  // 从 100 增加到 150
             uColor: { value: new THREE.Color(appearance.color) },
             uOpacity: { value: appearance.opacity }
         },
