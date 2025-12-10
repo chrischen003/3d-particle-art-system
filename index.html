@@ -39,22 +39,37 @@
             overflow-y: auto;
         }
         
-        h1 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #fff;
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
         }
         
-        .settings-btn {
-            width: auto;
-            padding: 5px 10px;
+        h1 {
+            font-size: 18px;
+            color: #fff;
+            margin: 0;
+        }
+        
+        .settings-icon {
+            width: 30px;
+            height: 30px;
+            padding: 5px;
             margin: 0;
             font-size: 16px;
             background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .settings-icon:hover {
+            background: rgba(0, 255, 136, 0.3);
+            transform: scale(1.1);
         }
         
         h2 {
@@ -83,6 +98,9 @@
             border-radius: 5px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
+        }
+        
+        select, input[type="color"], input[type="range"] {
             cursor: pointer;
         }
         
@@ -104,7 +122,6 @@
         
         input[type="color"] {
             height: 40px;
-            cursor: pointer;
         }
         
         input[type="range"] {
@@ -172,8 +189,9 @@
         }
 
         .ai-section {
-            border-top: 2px solid #00ff88;
+            border-top: 2px solid rgba(102, 126, 234, 0.5);
             padding-top: 15px;
+            margin-top: 20px;
         }
 
         .example-buttons {
@@ -232,7 +250,7 @@
             height: 0;
         }
 
-        .slider {
+        .slider-switch {
             position: absolute;
             cursor: pointer;
             top: 0;
@@ -244,7 +262,7 @@
             border-radius: 24px;
         }
 
-        .slider:before {
+        .slider-switch:before {
             position: absolute;
             content: "";
             height: 16px;
@@ -256,11 +274,11 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked + .slider-switch {
             background-color: #00ff88;
         }
 
-        input:checked + .slider:before {
+        input:checked + .slider-switch:before {
             transform: translateX(26px);
         }
 
@@ -270,19 +288,20 @@
             justify-content: space-between;
             font-size: 11px;
             color: #ccc;
+            margin-bottom: 15px;
         }
 
         /* 设置弹窗样式 */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 10000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
         }
 
         .modal.show {
@@ -292,13 +311,13 @@
         }
 
         .modal-content {
-            background: rgba(20, 20, 20, 0.95);
+            background: rgba(20, 20, 20, 0.98);
             padding: 30px;
             border-radius: 15px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);
-            border: 1px solid #00ff88;
+            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.5);
+            border: 2px solid #00ff88;
         }
 
         .modal-header {
@@ -312,25 +331,26 @@
             margin: 0;
             border: none;
             padding: 0;
+            color: #00ff88;
         }
 
         .close-btn {
             width: auto;
-            padding: 5px 15px;
+            padding: 8px 16px;
             margin: 0;
-            background: rgba(255, 0, 0, 0.3);
+            background: rgba(255, 0, 0, 0.5);
             font-size: 18px;
         }
 
         .api-key-input-group {
             position: relative;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .toggle-visibility {
             position: absolute;
             right: 10px;
-            top: 35px;
+            top: 38px;
             background: none;
             border: none;
             color: #00ff88;
@@ -338,21 +358,28 @@
             padding: 0;
             width: auto;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
+            z-index: 10;
         }
 
         .modal-info {
             background: rgba(0, 255, 136, 0.1);
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 8px;
             font-size: 12px;
             color: #ccc;
-            margin-top: 15px;
+            margin-top: 20px;
+            line-height: 1.6;
         }
 
         .modal-info a {
             color: #00ff88;
             text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .modal-info a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -368,60 +395,33 @@
             </div>
             
             <div class="api-key-input-group">
-                <label>Google Gemini API Key</label>
-                <input type="password" id="api-key-input" placeholder="Enter your API key here">
-                <button class="toggle-visibility" id="toggle-key-visibility">👁️</button>
+                <label style="color: #fff; font-size: 14px; margin-bottom: 8px;">Google Gemini API Key</label>
+                <input type="password" id="api-key-input" placeholder="AIza..." style="padding-right: 40px;">
+                <button class="toggle-visibility" id="toggle-key-visibility" type="button">👁️</button>
             </div>
             
-            <button id="save-key-btn">💾 Save API Key</button>
+            <button id="save-key-btn" style="margin-top: 0;">💾 Save & Activate</button>
             
             <div class="modal-info">
-                <strong>📌 How to get API Key:</strong><br>
+                <strong>📌 How to get free API Key:</strong><br>
                 1. Visit <a href="https://ai.google.dev/" target="_blank">ai.google.dev</a><br>
-                2. Sign in with Google account<br>
-                3. Click "Get API Key"<br>
-                4. Copy and paste it here<br>
+                2. Sign in with your Google account<br>
+                3. Click "Get API Key" button<br>
+                4. Copy the key and paste it above<br>
                 <br>
-                <strong>🎁 Free quota:</strong> 1500 requests/day
+                <strong>🎁 Free tier:</strong> 1500 requests/day<br>
+                <strong>💡 Tip:</strong> Your API key is stored locally and never uploaded
             </div>
         </div>
     </div>
     
     <div id="controls">
-        <h1>
-            <span>🌟 3D Particle Art</span>
-            <button class="settings-btn" id="open-settings">⚙️</button>
-        </h1>
-        
-        <!-- AI Section -->
-        <div class="ai-section">
-            <h2>🤖 AI Text-to-Particle</h2>
-
-            <div class="model-selector">
-                <span>Flash ⚡</span>
-                <label class="switch">
-                    <input type="checkbox" id="model-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span>Pro 🧠</span>
-            </div>
-
-            <div class="control-group">
-                <label>Describe your particle effect</label>
-                <textarea id="ai-input" placeholder="例如：创建浪漫的紫色烟花效果..." disabled></textarea>
-                <button id="send-btn" disabled>✨ Generate</button>
-            </div>
-
-            <div class="example-buttons">
-                <button class="example-btn" data-prompt="浪漫的紫色烟花 💜">💜 烟花</button>
-                <button class="example-btn" data-prompt="缓慢飘落的金色雪花 ⛄">⛄ 雪花</button>
-                <button class="example-btn" data-prompt="科幻感的蓝色粒子球体 🌌">🌌 科幻</button>
-                <button class="example-btn" data-prompt="火焰般的红色烟雾 🔥">🔥 火焰</button>
-            </div>
-
-            <div id="ai-status" class="ai-status warning">⚠️ Click ⚙️ to configure API Key</div>
+        <div class="header">
+            <h1>🌟 3D Particle Art</h1>
+            <button class="settings-icon" id="open-settings" type="button">⚙️</button>
         </div>
-
+        
+        <!-- 手动控制区（始终可用） -->
         <h2>🎨 Manual Controls</h2>
         
         <div class="control-group">
@@ -456,6 +456,35 @@
         </div>
         
         <button id="export-json">💾 Export JSON</button>
+        
+        <!-- AI 辅助区（可选功能） -->
+        <div class="ai-section">
+            <h2>🤖 AI Assistant (Optional)</h2>
+
+            <div class="model-selector">
+                <span>Flash ⚡</span>
+                <label class="switch">
+                    <input type="checkbox" id="model-toggle">
+                    <span class="slider-switch"></span>
+                </label>
+                <span>Pro 🧠</span>
+            </div>
+
+            <div class="control-group">
+                <label>Describe your particle effect</label>
+                <textarea id="ai-input" placeholder="例如：创建浪漫的紫色烟花效果..." disabled></textarea>
+                <button id="send-btn" disabled>✨ Generate</button>
+            </div>
+
+            <div class="example-buttons">
+                <button class="example-btn" data-prompt="浪漫的紫色烟花 💜" disabled>💜 烟花</button>
+                <button class="example-btn" data-prompt="缓慢飘落的金色雪花 ⛄" disabled>⛄ 雪花</button>
+                <button class="example-btn" data-prompt="科幻感的蓝色粒子球体 🌌" disabled>🌌 科幻</button>
+                <button class="example-btn" data-prompt="火焰般的红色烟雾 🔥" disabled>🔥 火焰</button>
+            </div>
+
+            <div id="ai-status" class="ai-status warning">⚠️ Click ⚙️ to configure API Key</div>
+        </div>
     </div>
     
     <div class="json-display" id="json-display">
