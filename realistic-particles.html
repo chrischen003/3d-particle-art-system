@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>❄️🦋 Realistic Particles - Snowflake & Butterfly</title>
+    <title>⭐ Realistic Particles v2.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; background: #000; overflow: hidden; }
@@ -12,7 +12,7 @@
         #controls {
             position: absolute; top: 20px; left: 20px;
             background: rgba(0, 0, 0, 0.95); padding: 25px;
-            border-radius: 20px; color: white; max-width: 380px;
+            border-radius: 20px; color: white; max-width: 400px;
             backdrop-filter: blur(25px); z-index: 100;
             max-height: 90vh; overflow-y: auto;
             border: 2px solid rgba(0, 255, 200, 0.5);
@@ -20,40 +20,48 @@
         }
         
         h1 {
-            font-size: 24px;
-            background: linear-gradient(135deg, #e0f7ff, #00ffaa, #ffdd00);
+            font-size: 26px;
+            background: linear-gradient(135deg, #e0f7ff, #00ffaa, #ffdd00, #ff6b6b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 20px; text-align: center;
-            font-weight: bold; letter-spacing: 1px;
+            font-weight: bold; letter-spacing: 1.5px;
         }
         
-        .mode-switch {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px; margin-bottom: 25px;
+        .mode-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 10px; margin-bottom: 25px;
         }
         
         .mode-btn {
-            padding: 18px 12px; font-size: 14px;
-            background: rgba(0, 255, 200, 0.1);
-            border: 2px solid rgba(0, 255, 200, 0.3);
+            padding: 15px 10px; font-size: 13px;
+            background: rgba(0, 255, 200, 0.08);
+            border: 2px solid rgba(0, 255, 200, 0.25);
             border-radius: 12px; color: white;
             cursor: pointer; transition: all 0.3s;
             font-weight: bold; text-align: center;
+            line-height: 1.4;
         }
         
-        .mode-btn:hover { background: rgba(0, 255, 200, 0.2); transform: scale(1.05); }
+        .mode-btn:hover { 
+            background: rgba(0, 255, 200, 0.15); 
+            transform: scale(1.05);
+            border-color: rgba(0, 255, 200, 0.4);
+        }
+        
         .mode-btn.active {
-            background: linear-gradient(135deg, rgba(0, 255, 200, 0.4), rgba(0, 191, 255, 0.4));
+            background: linear-gradient(135deg, rgba(0, 255, 200, 0.35), rgba(0, 191, 255, 0.35));
             border-color: #00ffaa;
             box-shadow: 0 0 30px rgba(0, 255, 200, 0.6);
+            transform: scale(1.05);
         }
         
         h2 {
             font-size: 14px; margin: 25px 0 15px 0; color: #00ffaa;
             border-bottom: 2px solid rgba(0, 255, 200, 0.4);
             padding-bottom: 8px; text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .control-group { margin-bottom: 18px; }
@@ -75,7 +83,7 @@
             border-color: rgba(0, 255, 200, 0.3);
         }
         
-        input[type="color"] { height: 55px; cursor: pointer; }
+        input[type="color"] { height: 55px; }
         input[type="range"] { padding: 0; height: 6px; }
         
         button {
@@ -102,7 +110,7 @@
         
         .badge {
             display: inline-block; padding: 5px 12px;
-            background: linear-gradient(135deg, rgba(0, 255, 200, 0.3), rgba(255, 221, 0, 0.3));
+            background: linear-gradient(135deg, rgba(0, 255, 200, 0.3), rgba(255, 100, 100, 0.3));
             border-radius: 15px; font-size: 11px;
             margin-top: 10px; color: #fff;
             font-weight: bold; letter-spacing: 0.5px;
@@ -113,62 +121,66 @@
     <div id="canvas-container"></div>
     
     <div id="controls">
-        <h1>✨ Realistic Particles</h1>
+        <h1>⭐ Realistic v2.0</h1>
         
-        <div class="mode-switch">
+        <div class="mode-grid">
             <button class="mode-btn active" data-mode="snowflake">
-                ❄️<br><strong>Snowflake</strong><br><small>六角冰晶</small>
+                ❄️<br><strong>Snowflake</strong><br><small>六角雪花</small>
             </button>
-            <button class="mode-btn" data-mode="butterfly">
-                🦋<br><strong>Butterfly</strong><br><small>蝴蝶飞舞</small>
+            <button class="mode-btn" data-mode="firefly">
+                ✨<br><strong>Firefly</strong><br><small>萤火虫</small>
+            </button>
+            <button class="mode-btn" data-mode="smoke">
+                💨<br><strong>Smoke</strong><br><small>体积烟雾</small>
+            </button>
+            <button class="mode-btn" data-mode="flame">
+                🔥<br><strong>Flame</strong><br><small>火焰热浪</small>
+            </button>
+            <button class="mode-btn" data-mode="firework">
+                🎆<br><strong>Firework</strong><br><small>爆炸烟花</small>
             </button>
         </div>
         
         <h2>⚙️ Parameters</h2>
         
         <div class="control-group">
-            <label>Color Palette</label>
+            <label>Color</label>
             <input type="color" id="color-picker" value="#e8f4ff">
         </div>
         
         <div class="control-group">
-            <label>Particles: <span id="count-value">15000</span></label>
-            <input type="range" id="particle-count" min="5000" max="30000" value="15000" step="2500">
+            <label>Count: <span id="count-value">18000</span></label>
+            <input type="range" id="particle-count" min="5000" max="30000" value="18000" step="2500">
         </div>
         
         <div class="control-group">
             <label>Size: <span id="size-value">1.0</span></label>
-            <input type="range" id="particle-size" min="0.5" max="3.0" value="1.0" step="0.1">
+            <input type="range" id="particle-size" min="0.4" max="3.5" value="1.0" step="0.1">
         </div>
         
         <div class="control-group">
-            <label>Speed: <span id="speed-value">0.04</span></label>
-            <input type="range" id="particle-speed" min="0.01" max="0.3" value="0.04" step="0.01">
+            <label>Speed: <span id="speed-value">0.05</span></label>
+            <input type="range" id="particle-speed" min="0.01" max="0.35" value="0.05" step="0.01">
         </div>
         
         <div class="control-group">
-            <label>Rotation: <span id="rotation-value">0.5</span></label>
-            <input type="range" id="rotation-speed" min="0.0" max="2.0" value="0.5" step="0.1">
-        </div>
-        
-        <div class="control-group">
-            <label>Sparkle: <span id="sparkle-value">1.5</span></label>
-            <input type="range" id="sparkle-intensity" min="0.5" max="3.0" value="1.5" step="0.1">
+            <label>Intensity: <span id="intensity-value">2.0</span></label>
+            <input type="range" id="intensity" min="0.5" max="4.0" value="2.0" step="0.1">
         </div>
         
         <button id="screenshot" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-            📸 Take Screenshot
+            📸 Screenshot
         </button>
         <button id="reset" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-            🔄 Reset Camera
+            🔄 Reset
         </button>
     </div>
     
     <div class="info">
-        <div>🖱️ <strong>Drag</strong> to rotate view</div>
-        <div>🔍 <strong>Scroll</strong> to zoom in/out</div>
-        <div>⚡ <strong>Auto-rotate</strong> enabled</div>
-        <div class="badge">REALISTIC SHADERS</div>
+        <div>🖱️ <strong>Drag</strong> rotate</div>
+        <div>🔍 <strong>Scroll</strong> zoom</div>
+        <div>⚡ <strong>Spherical</strong> mode</div>
+        <div class="badge">REALISTIC v2.0</div>
     </div>
     
     <script type="importmap">
@@ -181,564 +193,499 @@
     </script>
     
     <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        
-        console.log('❄️🦋 Realistic Particle System Loading...');
-        
-        // === REALISTIC SNOWFLAKE SHADER ===
-        const snowflakeVertexShader = `
-            attribute float size;
-            attribute float rotation;
-            attribute float sparkle;
-            varying float vRotation;
-            varying float vSparkle;
-            varying vec3 vPosition;
-            uniform float time;
-            
-            void main() {
-                vRotation = rotation + time * 0.2;
-                vSparkle = sparkle;
-                vPosition = position;
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize = size * (500.0 / -mvPosition.z);
-                gl_Position = projectionMatrix * mvPosition;
-            }
-        `;
-        
-        const snowflakeFragmentShader = `
-            uniform vec3 color;
-            uniform float sparkleIntensity;
-            uniform float time;
-            varying float vRotation;
-            varying float vSparkle;
-            varying vec3 vPosition;
-            
-            #define PI 3.14159265359
-            
-            // 六边形距离函数
-            float hexagonSDF(vec2 p, float r) {
-                const vec3 k = vec3(-0.866025404, 0.5, 0.577350269);
-                p = abs(p);
-                p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy;
-                p -= vec2(clamp(p.x, -k.z * r, k.z * r), r);
-                return length(p) * sign(p.y);
-            }
-            
-            // 雪花形状 - 六角星 + 分支
-            float snowflakeShape(vec2 p) {
-                float angle = atan(p.y, p.x);
-                float r = length(p);
-                
-                // 6个对称轴
-                float a6 = mod(angle, PI / 3.0) - PI / 6.0;
-                vec2 p6 = vec2(cos(a6), sin(a6)) * r;
-                
-                // 主轴 (6条)
-                float mainArm = 1.0 - smoothstep(0.02, 0.04, abs(p6.y));
-                mainArm *= smoothstep(0.9, 0.85, r);
-                
-                // 分支 (第1层)
-                float branch1 = 1.0 - smoothstep(0.01, 0.02, abs(p6.y - 0.15));
-                branch1 *= smoothstep(0.7, 0.65, r) * smoothstep(0.3, 0.35, r);
-                
-                // 分支 (第2层)
-                float branch2 = 1.0 - smoothstep(0.01, 0.02, abs(p6.y - 0.25));
-                branch2 *= smoothstep(0.55, 0.5, r) * smoothstep(0.2, 0.25, r);
-                
-                // 六边形核心
-                float hex = hexagonSDF(p, 0.15);
-                float core = 1.0 - smoothstep(-0.02, 0.02, hex);
-                
-                // 六边形外环
-                float hex2 = hexagonSDF(p, 0.35);
-                float ring = (1.0 - smoothstep(-0.02, 0.0, hex2)) * smoothstep(0.0, 0.02, hex2);
-                
-                return clamp(core + ring * 0.8 + mainArm * 0.9 + branch1 * 0.7 + branch2 * 0.6, 0.0, 1.0);
-            }
-            
-            // 冰晶折射效果
-            vec3 prismEffect(vec3 baseColor, float angle, float intensity) {
-                vec3 rainbow = vec3(
-                    sin(angle * 3.0 + time * 2.0) * 0.5 + 0.5,
-                    sin(angle * 3.0 + time * 2.0 + 2.094) * 0.5 + 0.5,
-                    sin(angle * 3.0 + time * 2.0 + 4.189) * 0.5 + 0.5
-                );
-                return mix(baseColor, rainbow * 1.5, intensity * 0.3);
-            }
-            
-            void main() {
-                vec2 uv = (gl_PointCoord - 0.5) * 2.0;
-                
-                // 旋转
-                float c = cos(vRotation);
-                float s = sin(vRotation);
-                uv = mat2(c, -s, s, c) * uv;
-                
-                // 雪花形状
-                float shape = snowflakeShape(uv);
-                
-                // 闪烁效果
-                float sparkleAnim = sin(time * 6.0 + vSparkle * 12.0 + vPosition.y * 0.5) * 0.4 + 0.6;
-                sparkleAnim = pow(sparkleAnim, 3.0) * sparkleIntensity;
-                
-                // 冰晶折射
-                float angle = atan(uv.y, uv.x);
-                vec3 finalColor = prismEffect(color, angle, sparkleAnim);
-                
-                // 中心到边缘的透明度渐变
-                float dist = length(uv);
-                float centerGlow = 1.0 - smoothstep(0.0, 0.3, dist);
-                finalColor += vec3(1.0) * centerGlow * 0.3 * sparkleAnim;
-                
-                // 最终透明度
-                float alpha = shape * (0.85 + sparkleAnim * 0.15);
-                
-                gl_FragColor = vec4(finalColor, alpha);
-            }
-        `;
-        
-        // === REALISTIC BUTTERFLY SHADER ===
-        const butterflyVertexShader = `
-            attribute float size;
-            attribute float phase;
-            attribute float wingAngle;
-            varying float vPhase;
-            varying float vWingAngle;
-            varying vec3 vPosition;
-            uniform float time;
-            
-            void main() {
-                vPhase = phase;
-                vWingAngle = wingAngle;
-                vPosition = position;
-                
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize = size * (600.0 / -mvPosition.z);
-                gl_Position = projectionMatrix * mvPosition;
-            }
-        `;
-        
-        const butterflyFragmentShader = `
-            uniform vec3 color;
-            uniform float time;
-            varying float vPhase;
-            varying float vWingAngle;
-            varying vec3 vPosition;
-            
-            #define PI 3.14159265359
-            
-            // 翅膀形状
-            float wingShape(vec2 p, float side) {
-                // 椭圆形翅膀轮廓
-                p.x *= 0.6; // 宽度
-                p.y *= 1.2; // 高度
-                float wing = length(p);
-                
-                // 翅膀边缘
-                float edge = smoothstep(0.9, 0.85, wing) * smoothstep(0.2, 0.25, wing);
-                
-                return edge;
-            }
-            
-            // 翅膀花纹
-            float wingPattern(vec2 p) {
-                // 斑点
-                float spot1 = 1.0 - smoothstep(0.08, 0.12, length(p - vec2(0.3, 0.2)));
-                float spot2 = 1.0 - smoothstep(0.06, 0.10, length(p - vec2(0.5, -0.1)));
-                float spot3 = 1.0 - smoothstep(0.05, 0.08, length(p - vec2(0.2, -0.3)));
-                
-                // 条纹
-                float stripe = sin(p.y * 8.0 + p.x * 3.0) * 0.5 + 0.5;
-                stripe = smoothstep(0.4, 0.6, stripe) * 0.3;
-                
-                return spot1 * 0.8 + spot2 * 0.6 + spot3 * 0.5 + stripe;
-            }
-            
-            void main() {
-                vec2 uv = (gl_PointCoord - 0.5) * 2.0;
-                
-                // 拍打动画
-                float flapTime = time * 6.0 + vPhase * 10.0;
-                float flap = sin(flapTime);
-                float flapAngle = flap * 0.4; // ±23度
-                
-                // 左右翅膀
-                float leftWing = 0.0;
-                float rightWing = 0.0;
-                
-                if (uv.x < 0.0) {
-                    // 左翅膀
-                    vec2 pLeft = uv;
-                    pLeft.x = -pLeft.x; // 镜像
-                    float angle = flapAngle;
-                    pLeft = mat2(cos(angle), -sin(angle), sin(angle), cos(angle)) * pLeft;
-                    leftWing = wingShape(pLeft, -1.0);
-                    leftWing *= (1.0 + wingPattern(pLeft) * 0.5);
-                } else {
-                    // 右翅膀
-                    vec2 pRight = uv;
-                    float angle = -flapAngle;
-                    pRight = mat2(cos(angle), -sin(angle), sin(angle), cos(angle)) * pRight;
-                    rightWing = wingShape(pRight, 1.0);
-                    rightWing *= (1.0 + wingPattern(pRight) * 0.5);
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+console.log('🚀 Realistic v2.0 Loading...');
+
+const sharedVertex = `
+attribute float size;
+attribute float phase;
+attribute float lifetime;
+varying float vPhase;
+varying float vLifetime;
+varying vec3 vPosition;
+uniform float time;
+void main() {
+    vPhase = phase;
+    vLifetime = lifetime;
+    vPosition = position;
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = size * (500.0 / -mvPosition.z);
+    gl_Position = projectionMatrix * mvPosition;
+}
+`;
+
+const snowflakeFragment = `
+uniform vec3 color;
+uniform float intensity;
+uniform float time;
+varying float vPhase;
+varying vec3 vPosition;
+#define PI 3.14159265359
+float hexagonSDF(vec2 p, float r) {
+    const vec3 k = vec3(-0.866025404, 0.5, 0.577350269);
+    p = abs(p);
+    p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy;
+    p -= vec2(clamp(p.x, -k.z*r, k.z*r), r);
+    return length(p) * sign(p.y);
+}
+float snowflakeShape(vec2 p) {
+    float angle = atan(p.y, p.x);
+    float r = length(p);
+    float a6 = mod(angle, PI/3.0) - PI/6.0;
+    vec2 p6 = vec2(cos(a6), sin(a6)) * r;
+    float mainArm = 1.0 - smoothstep(0.02, 0.04, abs(p6.y));
+    mainArm *= smoothstep(0.9, 0.85, r);
+    float branch1 = 1.0 - smoothstep(0.01, 0.02, abs(p6.y - 0.15));
+    branch1 *= smoothstep(0.7, 0.65, r) * smoothstep(0.3, 0.35, r);
+    float hex = hexagonSDF(p, 0.15);
+    float core = 1.0 - smoothstep(-0.02, 0.02, hex);
+    return clamp(core + mainArm*0.9 + branch1*0.7, 0.0, 1.0);
+}
+vec3 prismEffect(vec3 base, float angle) {
+    vec3 rainbow = vec3(
+        sin(angle*3.0 + time*2.0)*0.5 + 0.5,
+        sin(angle*3.0 + time*2.0 + 2.094)*0.5 + 0.5,
+        sin(angle*3.0 + time*2.0 + 4.189)*0.5 + 0.5
+    );
+    return mix(base, rainbow*1.5, intensity*0.2);
+}
+void main() {
+    vec2 uv = (gl_PointCoord - 0.5) * 2.0;
+    float rotation = time*0.3 + vPhase*6.28;
+    float c = cos(rotation);
+    float s = sin(rotation);
+    uv = mat2(c, -s, s, c) * uv;
+    float shape = snowflakeShape(uv);
+    float sparkle = sin(time*6.0 + vPhase*12.0)*0.4 + 0.6;
+    sparkle = pow(sparkle, 3.0) * intensity;
+    float angle = atan(uv.y, uv.x);
+    vec3 finalColor = prismEffect(color, angle) * (1.0 + sparkle*0.3);
+    float alpha = shape * (0.85 + sparkle*0.15);
+    gl_FragColor = vec4(finalColor, alpha);
+}
+`;
+
+const fireflyFragment = `
+uniform vec3 color;
+uniform float intensity;
+uniform float time;
+varying float vPhase;
+varying vec3 vPosition;
+void main() {
+    vec2 uv = gl_PointCoord - 0.5;
+    float d = length(uv)*2.0;
+    float core = 1.0 - smoothstep(0.0, 0.3, d);
+    float glow = 1.0 / (d*4.0 + 1.0);
+    float pulse = sin(time*5.0 + vPhase*8.0)*0.5 + 0.5;
+    pulse = pow(pulse, 2.0);
+    float finalGlow = core*1.8 + glow*pulse*0.8;
+    finalGlow *= intensity;
+    vec3 finalColor = color * (1.0 + pulse*0.6);
+    float alpha = finalGlow * (1.0 - smoothstep(0.6, 1.0, d));
+    gl_FragColor = vec4(finalColor, alpha);
+}
+`;
+
+const smokeFragment = `
+uniform vec3 color;
+uniform float intensity;
+uniform float time;
+varying float vPhase;
+varying float vLifetime;
+varying vec3 vPosition;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)))*43758.5453); }
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f*f*(3.0 - 2.0*f);
+    return mix(mix(hash(i), hash(i+vec2(1,0)), f.x),
+               mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y);
+}
+float fbm(vec2 p) {
+    float v = 0.0, a = 0.5;
+    for(int i=0; i<4; i++) {
+        v += a * noise(p);
+        p *= 2.0;
+        a *= 0.5;
+    }
+    return v;
+}
+void main() {
+    vec2 uv = (gl_PointCoord - 0.5)*2.0;
+    float dist = length(uv);
+    vec2 nc = uv*3.0 + time*0.2 + vPhase*5.0;
+    float n = fbm(nc);
+    float turb = fbm(nc*2.0 + vec2(time*0.3, 0));
+    dist += (n - 0.5)*0.3 + (turb - 0.5)*0.2;
+    float alpha = 1.0 - smoothstep(0.0, 1.2, dist);
+    alpha *= 0.4 + n*0.3;
+    alpha *= vLifetime;
+    vec3 smokeColor = color * (0.7 + n*0.6);
+    smokeColor = mix(smokeColor, vec3(1.0), n*0.2*intensity);
+    gl_FragColor = vec4(smokeColor, alpha*intensity*0.6);
+}
+`;
+
+const flameFragment = `
+uniform vec3 color;
+uniform float intensity;
+uniform float time;
+varying float vPhase;
+varying float vLifetime;
+varying vec3 vPosition;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)))*43758.5453); }
+float noise(vec2 p) {
+    vec2 i = floor(p), f = fract(p);
+    f = f*f*(3.0 - 2.0*f);
+    return mix(mix(hash(i), hash(i+vec2(1,0)), f.x),
+               mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y);
+}
+void main() {
+    vec2 uv = (gl_PointCoord - 0.5)*2.0;
+    float dist = length(uv);
+    float flicker = noise(uv*4.0 + time*8.0 + vPhase*10.0)*0.4;
+    dist += flicker - 0.2;
+    float flame = 1.0 - smoothstep(0.0, 1.0, dist);
+    flame *= vLifetime;
+    vec3 orange = vec3(1.0, 0.4, 0.1);
+    vec3 yellow = vec3(1.0, 0.9, 0.3);
+    vec3 white = vec3(1.2, 1.2, 1.0);
+    vec3 flameColor;
+    if(dist < 0.3) flameColor = mix(white, yellow, dist/0.3);
+    else if(dist < 0.7) flameColor = mix(yellow, orange, (dist-0.3)/0.4);
+    else flameColor = mix(orange, color, (dist-0.7)/0.3);
+    flameColor *= 1.0 + intensity*0.5;
+    gl_FragColor = vec4(flameColor, flame*0.9);
+}
+`;
+
+const fireworkFragment = `
+uniform vec3 color;
+uniform float intensity;
+uniform float time;
+varying float vPhase;
+varying float vLifetime;
+varying vec3 vPosition;
+void main() {
+    vec2 uv = (gl_PointCoord - 0.5)*2.0;
+    float dist = length(uv);
+    float trail = 1.0/(dist*6.0 + 1.0);
+    float pulse = sin(time*12.0 + vPhase*20.0)*0.5 + 0.5;
+    pulse = pow(pulse, 2.0);
+    vec3 startColor = color;
+    vec3 endColor = color*0.3;
+    vec3 finalColor = mix(endColor, startColor, vLifetime);
+    finalColor *= intensity*(1.0 + pulse*0.5);
+    float alpha = trail*(1.0 - dist)*vLifetime;
+    gl_FragColor = vec4(finalColor, alpha);
+}
+`;
+
+const configs = {
+    snowflake: { type:'snowflake', count:18000, color:'#e8f4ff', size:1.0, speed:0.05, intensity:2.0, shader:'snowflake' },
+    firefly: { type:'firefly', count:5000, color:'#ffee88', size:1.8, speed:0.04, intensity:2.5, shader:'firefly' },
+    smoke: { type:'smoke', count:12000, color:'#a0b0c0', size:1.5, speed:0.03, intensity:1.8, shader:'smoke' },
+    flame: { type:'flame', count:10000, color:'#ff6600', size:1.4, speed:0.08, intensity:2.8, shader:'flame' },
+    firework: { type:'firework', count:8000, color:'#ff55ff', size:1.2, speed:0.15, intensity:3.0, shader:'firework' }
+};
+
+let scene, camera, renderer, controls, particles=null, backgroundStars=null;
+let currentConfig = {...configs.snowflake};
+let time = 0;
+
+function randomPointInSphere(radius) {
+    const u = Math.random(), v = Math.random();
+    const theta = 2*Math.PI*u;
+    const phi = Math.acos(2*v - 1);
+    const r = radius * Math.cbrt(Math.random());
+    const sinPhi = Math.sin(phi);
+    return [r*sinPhi*Math.cos(theta), r*sinPhi*Math.sin(theta), r*Math.cos(phi)];
+}
+
+function init() {
+    scene = new THREE.Scene();
+    createCosmicBackground();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 8, 30);
+    renderer = new THREE.WebGLRenderer({antialias:true, alpha:false, powerPreference:'high-performance'});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 15;
+    controls.maxDistance = 70;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.2;
+    controls.maxPolarAngle = Math.PI*0.65;
+    scene.add(new THREE.AmbientLight(0xffffff, 2.0));
+    const l1 = new THREE.PointLight(0x00ffaa, 3.5, 120);
+    l1.position.set(25,25,25);
+    scene.add(l1);
+    const l2 = new THREE.PointLight(0x0088ff, 3.0, 120);
+    l2.position.set(-25,-20,20);
+    scene.add(l2);
+    createParticles();
+    setupControls();
+    window.addEventListener('resize', ()=>{
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    animate();
+    console.log('✅ v2.0 Ready!');
+}
+
+function createCosmicBackground() {
+    const canvas = document.createElement('canvas');
+    canvas.width=4; canvas.height=512;
+    const ctx = canvas.getContext('2d');
+    const g = ctx.createLinearGradient(0,0,0,512);
+    g.addColorStop(0,'#000820');
+    g.addColorStop(0.4,'#001a40');
+    g.addColorStop(0.7,'#002855');
+    g.addColorStop(1,'#000');
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,4,512);
+    scene.background = new THREE.CanvasTexture(canvas);
+    const starGeo = new THREE.BufferGeometry();
+    const starCount = 8000;
+    const starPos = new Float32Array(starCount*3);
+    for(let i=0; i<starCount; i++) {
+        const i3=i*3;
+        const rad = 200 + Math.random()*500;
+        const theta = Math.random()*Math.PI*2;
+        const phi = Math.acos(Math.random()*2 - 1);
+        starPos[i3] = rad*Math.sin(phi)*Math.cos(theta);
+        starPos[i3+1] = rad*Math.sin(phi)*Math.sin(theta);
+        starPos[i3+2] = rad*Math.cos(phi);
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
+    const starMat = new THREE.PointsMaterial({color:0xffffff, size:1.5, sizeAttenuation:true, transparent:true, opacity:1.0, blending:THREE.AdditiveBlending});
+    backgroundStars = new THREE.Points(starGeo, starMat);
+    scene.add(backgroundStars);
+}
+
+function createParticles() {
+    if(particles) {
+        scene.remove(particles);
+        particles.geometry.dispose();
+        particles.material.dispose();
+    }
+    const count = currentConfig.count;
+    const geo = new THREE.BufferGeometry();
+    const pos = new Float32Array(count*3);
+    const vel = new Float32Array(count*3);
+    const phases = new Float32Array(count);
+    const sizes = new Float32Array(count);
+    const lifetimes = new Float32Array(count);
+    const radius = 18;
+    for(let i=0; i<count; i++) {
+        const i3=i*3;
+        const p = randomPointInSphere(radius);
+        pos[i3]=p[0]; pos[i3+1]=p[1]; pos[i3+2]=p[2];
+        if(currentConfig.type==='firework') {
+            const len = Math.sqrt(p[0]*p[0]+p[1]*p[1]+p[2]*p[2])||1;
+            vel[i3] = p[0]/len*0.3;
+            vel[i3+1] = p[1]/len*0.3;
+            vel[i3+2] = p[2]/len*0.3;
+        } else {
+            vel[i3] = (Math.random()-0.5)*0.2;
+            vel[i3+1] = (Math.random()-0.5)*0.2;
+            vel[i3+2] = (Math.random()-0.5)*0.2;
+        }
+        phases[i] = Math.random()*Math.PI*2;
+        sizes[i] = (Math.random()*0.6+0.7)*currentConfig.size;
+        lifetimes[i] = Math.random();
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    geo.setAttribute('velocity', new THREE.BufferAttribute(vel,3));
+    geo.setAttribute('phase', new THREE.BufferAttribute(phases,1));
+    geo.setAttribute('size', new THREE.BufferAttribute(sizes,1));
+    geo.setAttribute('lifetime', new THREE.BufferAttribute(lifetimes,1));
+    let frag;
+    switch(currentConfig.shader) {
+        case 'snowflake': frag=snowflakeFragment; break;
+        case 'firefly': frag=fireflyFragment; break;
+        case 'smoke': frag=smokeFragment; break;
+        case 'flame': frag=flameFragment; break;
+        case 'firework': frag=fireworkFragment; break;
+    }
+    const mat = new THREE.ShaderMaterial({
+        uniforms: {
+            color: {value: new THREE.Color(currentConfig.color)},
+            time: {value:0},
+            intensity: {value:currentConfig.intensity}
+        },
+        vertexShader: sharedVertex,
+        fragmentShader: frag,
+        transparent: true,
+        blending: currentConfig.shader==='smoke'? THREE.NormalBlending : THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    particles = new THREE.Points(geo, mat);
+    scene.add(particles);
+    console.log(`✅ ${count} ${currentConfig.type}`);
+}
+
+function updateParticles() {
+    if(!particles) return;
+    time += 0.016;
+    particles.material.uniforms.time.value = time;
+    particles.material.uniforms.intensity.value = currentConfig.intensity;
+    const pos = particles.geometry.attributes.position.array;
+    const vel = particles.geometry.attributes.velocity.array;
+    const phases = particles.geometry.attributes.phase.array;
+    const lifetimes = particles.geometry.attributes.lifetime.array;
+    const speed = currentConfig.speed;
+    const radius = 18;
+    for(let i=0; i<pos.length; i+=3) {
+        const idx=i/3;
+        const phase=phases[idx];
+        const px=pos[i], py=pos[i+1], pz=pos[i+2];
+        const r = Math.sqrt(px*px+py*py+pz*pz);
+        switch(currentConfig.type) {
+            case 'snowflake':
+                pos[i+1] -= speed*1.5;
+                pos[i] += Math.sin(time+phase)*0.01;
+                pos[i+2] += Math.cos(time+phase)*0.01;
+                if(pos[i+1]<-radius) {
+                    pos[i+1]=radius;
+                    const np = randomPointInSphere(radius*0.8);
+                    pos[i]=np[0]; pos[i+2]=np[2];
                 }
-                
-                float wing = max(leftWing, rightWing);
-                
-                // 身体（中心线）
-                float body = 1.0 - smoothstep(0.02, 0.05, abs(uv.x));
-                body *= smoothstep(0.8, 0.7, abs(uv.y));
-                
-                // 颜色渐变（根部到边缘）
-                float dist = length(uv);
-                vec3 darkColor = color * 0.5;
-                vec3 lightColor = color * 1.3;
-                vec3 finalColor = mix(darkColor, lightColor, dist * 0.8);
-                
-                // 翅膀光泽
-                float shine = pow(1.0 - dist, 3.0) * 0.4;
-                finalColor += vec3(shine);
-                
-                // 最终合成
-                float alpha = clamp(wing + body * 0.9, 0.0, 1.0);
-                
-                gl_FragColor = vec4(finalColor, alpha);
-            }
-        `;
-        
-        // === CONFIG ===
-        const configs = {
-            snowflake: {
-                type: 'snowflake',
-                count: 15000,
-                color: '#e8f4ff',
-                size: 1.0,
-                speed: 0.04,
-                rotation: 0.5,
-                sparkle: 1.5
-            },
-            butterfly: {
-                type: 'butterfly',
-                count: 600,
-                color: '#ffdd00',
-                size: 2.5,
-                speed: 0.08,
-                rotation: 0.3,
-                sparkle: 1.0
-            }
-        };
-        
-        let scene, camera, renderer, controls, particles = null, backgroundStars = null;
-        let currentConfig = { ...configs.snowflake };
-        let time = 0;
-        
-        function init() {
-            scene = new THREE.Scene();
-            createCosmicBackground();
-            
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 25);
-            
-            renderer = new THREE.WebGLRenderer({ 
-                antialias: true, alpha: false, powerPreference: 'high-performance'
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
-            
-            controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.minDistance = 12;
-            controls.maxDistance = 60;
-            controls.autoRotate = true;
-            controls.autoRotateSpeed = 1.0;
-            controls.maxPolarAngle = Math.PI * 0.7;
-            
-            scene.add(new THREE.AmbientLight(0xffffff, 1.8));
-            const light1 = new THREE.PointLight(0x00ffaa, 3, 100);
-            light1.position.set(20, 20, 20);
-            scene.add(light1);
-            const light2 = new THREE.PointLight(0x0088ff, 2.5, 100);
-            light2.position.set(-20, -15, 15);
-            scene.add(light2);
-            
+                break;
+            case 'firefly':
+                const drift = Math.sin(time*0.7+phase)*0.02;
+                const wave = Math.sin(time*2.0+phase*1.3)*0.03;
+                pos[i] += vel[i]*speed*0.5 + drift;
+                pos[i+1] += vel[i+1]*speed*0.2 + wave;
+                pos[i+2] += vel[i+2]*speed*0.5 + Math.cos(time*0.5+phase*1.7)*0.02;
+                if(r>radius) {
+                    const k=radius/r;
+                    pos[i]=px*k; pos[i+1]=py*k; pos[i+2]=pz*k;
+                }
+                break;
+            case 'smoke':
+                pos[i+1] += speed;
+                pos[i] += Math.sin(time*0.5+phase)*0.02;
+                pos[i+2] += Math.cos(time*0.5+phase)*0.015;
+                lifetimes[idx] = Math.max(0, lifetimes[idx]-0.003);
+                if(lifetimes[idx]<=0 || pos[i+1]>radius) {
+                    pos[i+1]=-radius;
+                    const np = randomPointInSphere(radius*0.5);
+                    pos[i]=np[0]; pos[i+2]=np[2];
+                    lifetimes[idx]=1.0;
+                }
+                break;
+            case 'flame':
+                pos[i+1] += speed*2;
+                pos[i] += Math.sin(time*2+phase)*0.08;
+                pos[i+2] += Math.cos(time*1.5+phase)*0.06;
+                lifetimes[idx] = Math.max(0, lifetimes[idx]-0.005);
+                if(lifetimes[idx]<=0 || pos[i+1]>radius) {
+                    pos[i+1]=-radius;
+                    const np = randomPointInSphere(radius*0.3);
+                    pos[i]=np[0]; pos[i+2]=np[2];
+                    lifetimes[idx]=1.0;
+                }
+                break;
+            case 'firework':
+                pos[i] += vel[i]*speed*3;
+                pos[i+1] += vel[i+1]*speed*3 - 0.01;
+                pos[i+2] += vel[i+2]*speed*3;
+                lifetimes[idx] = Math.max(0, lifetimes[idx]-0.008);
+                if(lifetimes[idx]<=0 || r>radius*1.2) {
+                    const np = randomPointInSphere(2);
+                    pos[i]=np[0]; pos[i+1]=np[1]; pos[i+2]=np[2];
+                    const len = Math.sqrt(pos[i]*pos[i]+pos[i+1]*pos[i+1]+pos[i+2]*pos[i+2])||1;
+                    vel[i]=(Math.random()-0.5)*0.3;
+                    vel[i+1]=(Math.random()-0.5)*0.3;
+                    vel[i+2]=(Math.random()-0.5)*0.3;
+                    lifetimes[idx]=1.0;
+                }
+                break;
+        }
+    }
+    particles.geometry.attributes.position.needsUpdate=true;
+    if(['smoke','flame','firework'].includes(currentConfig.type)) {
+        particles.geometry.attributes.lifetime.needsUpdate=true;
+    }
+    if(backgroundStars) backgroundStars.rotation.y+=0.0004;
+}
+
+function setupControls() {
+    const btns = document.querySelectorAll('.mode-btn');
+    btns.forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            btns.forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            const mode = btn.dataset.mode;
+            currentConfig = {...configs[mode]};
+            document.getElementById('color-picker').value=currentConfig.color;
+            document.getElementById('particle-count').value=currentConfig.count;
+            document.getElementById('particle-size').value=currentConfig.size;
+            document.getElementById('particle-speed').value=currentConfig.speed;
+            document.getElementById('intensity').value=currentConfig.intensity;
+            document.getElementById('count-value').textContent=currentConfig.count;
+            document.getElementById('size-value').textContent=currentConfig.size;
+            document.getElementById('speed-value').textContent=currentConfig.speed;
+            document.getElementById('intensity-value').textContent=currentConfig.intensity;
             createParticles();
-            setupControls();
-            
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-            
-            animate();
-            console.log('✅ Realistic System Ready!');
-        }
-        
-        function createCosmicBackground() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 4; canvas.height = 512;
-            const ctx = canvas.getContext('2d');
-            const gradient = ctx.createLinearGradient(0, 0, 0, 512);
-            gradient.addColorStop(0, '#001428');
-            gradient.addColorStop(0.4, '#002855');
-            gradient.addColorStop(0.7, '#003e72');
-            gradient.addColorStop(1, '#000000');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 4, 512);
-            scene.background = new THREE.CanvasTexture(canvas);
-            
-            const starGeometry = new THREE.BufferGeometry();
-            const starCount = 6000;
-            const starPositions = new Float32Array(starCount * 3);
-            for (let i = 0; i < starCount; i++) {
-                const i3 = i * 3;
-                const radius = 180 + Math.random() * 400;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(Math.random() * 2 - 1);
-                starPositions[i3] = radius * Math.sin(phi) * Math.cos(theta);
-                starPositions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-                starPositions[i3 + 2] = radius * Math.cos(phi);
-            }
-            starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-            const starMaterial = new THREE.PointsMaterial({
-                color: 0xffffff, size: 1.2, sizeAttenuation: true,
-                transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending
-            });
-            backgroundStars = new THREE.Points(starGeometry, starMaterial);
-            scene.add(backgroundStars);
-        }
-        
-        function createParticles() {
-            if (particles) {
-                scene.remove(particles);
-                particles.geometry.dispose();
-                particles.material.dispose();
-            }
-            
-            const count = currentConfig.count;
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(count * 3);
-            const velocities = new Float32Array(count * 3);
-            const phases = new Float32Array(count);
-            const sizes = new Float32Array(count);
-            const rotations = new Float32Array(count);
-            const sparkles = new Float32Array(count);
-            const wingAngles = new Float32Array(count);
-            
-            for (let i = 0; i < count; i++) {
-                const i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 35;
-                positions[i3 + 1] = (Math.random() - 0.5) * 35;
-                positions[i3 + 2] = (Math.random() - 0.5) * 35;
-                
-                velocities[i3] = (Math.random() - 0.5) * 0.4;
-                velocities[i3 + 1] = (Math.random() - 0.5) * 0.4;
-                velocities[i3 + 2] = (Math.random() - 0.5) * 0.4;
-                
-                phases[i] = Math.random() * Math.PI * 2;
-                sizes[i] = (Math.random() * 0.7 + 0.6) * currentConfig.size;
-                rotations[i] = Math.random() * Math.PI * 2;
-                sparkles[i] = Math.random();
-                wingAngles[i] = Math.random() * Math.PI;
-            }
-            
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
-            geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-            geometry.setAttribute('rotation', new THREE.BufferAttribute(rotations, 1));
-            geometry.setAttribute('sparkle', new THREE.BufferAttribute(sparkles, 1));
-            geometry.setAttribute('wingAngle', new THREE.BufferAttribute(wingAngles, 1));
-            
-            let material;
-            const color = new THREE.Color(currentConfig.color);
-            
-            if (currentConfig.type === 'snowflake') {
-                material = new THREE.ShaderMaterial({
-                    uniforms: {
-                        color: { value: color },
-                        time: { value: 0 },
-                        sparkleIntensity: { value: currentConfig.sparkle }
-                    },
-                    vertexShader: snowflakeVertexShader,
-                    fragmentShader: snowflakeFragmentShader,
-                    transparent: true,
-                    blending: THREE.AdditiveBlending,
-                    depthWrite: false
-                });
-            } else {
-                material = new THREE.ShaderMaterial({
-                    uniforms: {
-                        color: { value: color },
-                        time: { value: 0 }
-                    },
-                    vertexShader: butterflyVertexShader,
-                    fragmentShader: butterflyFragmentShader,
-                    transparent: true,
-                    depthWrite: false
-                });
-            }
-            
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-            console.log(`✅ ${count} ${currentConfig.type} particles`);
-        }
-        
-        function updateParticles() {
-            if (!particles) return;
-            time += 0.016;
-            
-            if (particles.material.uniforms) {
-                particles.material.uniforms.time.value = time;
-                if (particles.material.uniforms.sparkleIntensity) {
-                    particles.material.uniforms.sparkleIntensity.value = currentConfig.sparkle;
-                }
-            }
-            
-            const positions = particles.geometry.attributes.position.array;
-            const velocities = particles.geometry.attributes.velocity.array;
-            const phases = particles.geometry.attributes.phase.array;
-            const rotations = particles.geometry.attributes.rotation.array;
-            const speed = currentConfig.speed;
-            const rotSpeed = currentConfig.rotation;
-            
-            for (let i = 0; i < positions.length; i += 3) {
-                const idx = i / 3;
-                const phase = phases[idx];
-                
-                if (currentConfig.type === 'snowflake') {
-                    // 雪花: 下落 + 旋转 + 飘动
-                    positions[i + 1] -= speed;
-                    positions[i] += Math.sin(time * 1.5 + phase) * 0.008;
-                    positions[i + 2] += Math.cos(time * 1.2 + phase) * 0.006;
-                    
-                    // 旋转
-                    rotations[idx] += rotSpeed * 0.01;
-                    
-                    if (positions[i + 1] < -18) {
-                        positions[i + 1] = 18;
-                        positions[i] = (Math.random() - 0.5) * 35;
-                        positions[i + 2] = (Math.random() - 0.5) * 35;
-                    }
-                } else {
-                    // 蝴蝶: 波浪飞行
-                    const waveX = Math.sin(time * 1.5 + phase) * 0.15;
-                    const waveY = Math.sin(time * 2.0 + phase * 1.3) * 0.1 + Math.cos(time * 1.2) * 0.05;
-                    const waveZ = Math.cos(time * 1.8 + phase) * 0.15;
-                    
-                    positions[i] += (velocities[i] * speed * 2 + waveX);
-                    positions[i + 1] += waveY;
-                    positions[i + 2] += (velocities[i + 2] * speed * 2 + waveZ);
-                    
-                    // 边界检查
-                    if (Math.abs(positions[i]) > 20) velocities[i] *= -1;
-                    if (Math.abs(positions[i + 1]) > 15) velocities[i + 1] *= -1;
-                    if (Math.abs(positions[i + 2]) > 20) velocities[i + 2] *= -1;
-                }
-            }
-            
-            particles.geometry.attributes.position.needsUpdate = true;
-            if (currentConfig.type === 'snowflake') {
-                particles.geometry.attributes.rotation.needsUpdate = true;
-            }
-            
-            if (backgroundStars) backgroundStars.rotation.y += 0.0003;
-        }
-        
-        function setupControls() {
-            const modeBtns = document.querySelectorAll('.mode-btn');
-            modeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    modeBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    const mode = btn.dataset.mode;
-                    currentConfig = { ...configs[mode] };
-                    
-                    document.getElementById('color-picker').value = currentConfig.color;
-                    document.getElementById('particle-count').value = currentConfig.count;
-                    document.getElementById('particle-size').value = currentConfig.size;
-                    document.getElementById('particle-speed').value = currentConfig.speed;
-                    document.getElementById('rotation-speed').value = currentConfig.rotation;
-                    document.getElementById('sparkle-intensity').value = currentConfig.sparkle;
-                    
-                    document.getElementById('count-value').textContent = currentConfig.count;
-                    document.getElementById('size-value').textContent = currentConfig.size;
-                    document.getElementById('speed-value').textContent = currentConfig.speed;
-                    document.getElementById('rotation-value').textContent = currentConfig.rotation;
-                    document.getElementById('sparkle-value').textContent = currentConfig.sparkle;
-                    
-                    createParticles();
-                });
-            });
-            
-            document.getElementById('color-picker').addEventListener('input', (e) => {
-                currentConfig.color = e.target.value;
-                const newColor = new THREE.Color(e.target.value);
-                if (particles.material.uniforms?.color) {
-                    particles.material.uniforms.color.value = newColor;
-                }
-            });
-            
-            document.getElementById('particle-count').addEventListener('input', (e) => {
-                const value = parseInt(e.target.value);
-                document.getElementById('count-value').textContent = value;
-                currentConfig.count = value;
-                createParticles();
-            });
-            
-            document.getElementById('particle-size').addEventListener('input', (e) => {
-                const value = parseFloat(e.target.value);
-                document.getElementById('size-value').textContent = value;
-                currentConfig.size = value;
-            });
-            
-            document.getElementById('particle-speed').addEventListener('input', (e) => {
-                document.getElementById('speed-value').textContent = e.target.value;
-                currentConfig.speed = parseFloat(e.target.value);
-            });
-            
-            document.getElementById('rotation-speed').addEventListener('input', (e) => {
-                document.getElementById('rotation-value').textContent = e.target.value;
-                currentConfig.rotation = parseFloat(e.target.value);
-            });
-            
-            document.getElementById('sparkle-intensity').addEventListener('input', (e) => {
-                document.getElementById('sparkle-value').textContent = e.target.value;
-                currentConfig.sparkle = parseFloat(e.target.value);
-            });
-            
-            document.getElementById('screenshot').addEventListener('click', () => {
-                renderer.render(scene, camera);
-                renderer.domElement.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = `realistic-${currentConfig.type}-${Date.now()}.png`;
-                    link.click();
-                    URL.revokeObjectURL(url);
-                });
-            });
-            
-            document.getElementById('reset').addEventListener('click', () => {
-                camera.position.set(0, 5, 25);
-                controls.target.set(0, 0, 0);
-                controls.update();
-            });
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            updateParticles();
-            renderer.render(scene, camera);
-        }
-        
-        init();
-        console.log('🎉 Realistic Snowflake & Butterfly System Active!');
+        });
+    });
+    document.getElementById('color-picker').addEventListener('input',(e)=>{
+        currentConfig.color=e.target.value;
+        particles.material.uniforms.color.value=new THREE.Color(e.target.value);
+    });
+    document.getElementById('particle-count').addEventListener('input',(e)=>{
+        const v=parseInt(e.target.value);
+        document.getElementById('count-value').textContent=v;
+        currentConfig.count=v;
+        createParticles();
+    });
+    document.getElementById('particle-size').addEventListener('input',(e)=>{
+        document.getElementById('size-value').textContent=e.target.value;
+        currentConfig.size=parseFloat(e.target.value);
+    });
+    document.getElementById('particle-speed').addEventListener('input',(e)=>{
+        document.getElementById('speed-value').textContent=e.target.value;
+        currentConfig.speed=parseFloat(e.target.value);
+    });
+    document.getElementById('intensity').addEventListener('input',(e)=>{
+        document.getElementById('intensity-value').textContent=e.target.value;
+        currentConfig.intensity=parseFloat(e.target.value);
+    });
+    document.getElementById('screenshot').addEventListener('click',()=>{
+        renderer.render(scene,camera);
+        renderer.domElement.toBlob((blob)=>{
+            const url=URL.createObjectURL(blob);
+            const link=document.createElement('a');
+            link.href=url;
+            link.download=`realistic-${currentConfig.type}-${Date.now()}.png`;
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+    });
+    document.getElementById('reset').addEventListener('click',()=>{
+        camera.position.set(0,8,30);
+        controls.target.set(0,0,0);
+        controls.update();
+    });
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    updateParticles();
+    renderer.render(scene,camera);
+}
+
+init();
+console.log('🎉 v2.0: 5 Effects Active!');
     </script>
 </body>
 </html>
