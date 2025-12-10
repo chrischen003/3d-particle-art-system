@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Particle Test</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 14px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <div id="status">Loading...</div>
+    </div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <script type="module">
+        const statusDiv = document.getElementById('status');
+        
+        try {
+            statusDiv.innerHTML = 'Step 1: Loading Three.js...';
+            const THREE = await import('three');
+            statusDiv.innerHTML = 'Step 2: Loading OrbitControls...';
+            const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+            
+            statusDiv.innerHTML = 'Step 3: Creating scene...';
+            
+            // Scene
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            
+            // Camera  
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 10;
+            
+            // Renderer
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            
+            // Controls
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            
+            // Light
+            const light = new THREE.AmbientLight(0xffffff, 2.0);
+            scene.add(light);
+            
+            statusDiv.innerHTML = 'Step 4: Creating particles...';
+            
+            // Particles
+            const count = 10000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 20;
+                positions[i + 1] = (Math.random() - 0.5) * 20;
+                positions[i + 2] = (Math.random() - 0.5) * 20;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const material = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.5,
+                sizeAttenuation: true
+            });
+            
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            statusDiv.innerHTML = '✅ Success! 10000 particles created<br>Use mouse to rotate<br>Scroll to zoom';
+            
+            // Animation
+            let frameCount = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                particles.rotation.y += 0.001;
+                
+                controls.update();
+                renderer.render(scene, camera);
+                
+                if (frameCount === 60) {
+                    statusDiv.innerHTML += '<br>✅ Rendering at 60 FPS!';
+                }
+                frameCount++;
+            }
+            
+            animate();
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+        } catch (error) {
+            statusDiv.innerHTML = '❌ Error: ' + error.message;
+            console.error('Error:', error);
+        }
+    </script>
+</body>
+</html>
