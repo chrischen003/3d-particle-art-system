@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/3d-particle-art-system/',
+  base: './',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
