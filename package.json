@@ -1,0 +1,28 @@
+{
+  "name": "3d-particle-art-system",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Multi-modal 3D particle art generation system with LLM-driven JSON control",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "threejs",
+    "particle-system",
+    "webgl",
+    "3d",
+    "art",
+    "generative"
+  ],
+  "author": "chrischen003",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
