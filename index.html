@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Particle Art System</title>
-    <meta http-equiv="refresh" content="0; url=./index-standalone.html">
+    <meta http-equiv="refresh" content="0; url=./index-enhanced.html">
     <style>
         body {
             margin: 0;
@@ -23,18 +23,18 @@
             background: rgba(0, 0, 0, 0.8);
             border: 3px solid #00ff88;
             border-radius: 20px;
-            max-width: 600px;
+            max-width: 700px;
             box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
         }
         h1 {
             color: #00ff88;
             margin-bottom: 20px;
-            font-size: 32px;
+            font-size: 36px;
             animation: pulse 2s ease-in-out infinite;
         }
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
         }
         p {
             margin: 15px 0;
@@ -45,8 +45,8 @@
             color: #00ff88;
             text-decoration: none;
             font-weight: bold;
-            font-size: 18px;
-            padding: 10px 20px;
+            font-size: 20px;
+            padding: 15px 30px;
             border: 2px solid #00ff88;
             border-radius: 10px;
             display: inline-block;
@@ -56,37 +56,44 @@
         a:hover {
             background: #00ff88;
             color: #000;
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
-        .note {
+        .features {
             margin-top: 30px;
             padding: 20px;
             background: rgba(0, 255, 136, 0.1);
             border-radius: 10px;
             font-size: 14px;
-            color: #ccc;
+            text-align: left;
         }
-        .success {
-            color: #00ff88;
-            font-weight: bold;
+        .feature-item {
+            margin: 10px 0;
+            color: #fff;
+        }
+        .emoji {
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
     <div class="redirect">
-        <h1>🎉 成功！</h1>
-        <p>🚀 正在跳转到工作版本...</p>
+        <h1>✨ 增强版已就绪！</h1>
+        <p>🚀 正在跳转到全新的增强版粒子系统...</p>
         <p>如果没有自动跳转，请点击：</p>
-        <a href="./index-standalone.html">✨ 进入 3D 粒子系统</a>
+        <a href="./index-enhanced.html">🌟 进入增强版</a>
         
-        <div class="note">
-            <div class="success">✅ 使用 unpkg CDN</div>
-            <div class="success">✅ 保证可见性</div>
-            <div class="success">✅ 支持完整交互</div>
-            <div style="margin-top: 15px;">
-                基于您的测试结果优化，
-                <br>simple.html 已验证可用 ✅
-            </div>
+        <div class="features">
+            <h3 style="color: #00ff88; margin-bottom: 15px;">🎨 全新特性</h3>
+            <div class="feature-item"><span class="emoji">❄️</span> 拟真雪花 - 六边形闪烁</div>
+            <div class="feature-item"><span class="emoji">💨</span> 细腻烟雾 - 噪声扰动</div>
+            <div class="feature-item"><span class="emoji">🔥</span> 逼真火焰 - 扭曲上升</div>
+            <div class="feature-item"><span class="emoji">🌸</span> 百合花瓣 - 柔和摆动</div>
+            <div class="feature-item"><span class="emoji">🦋</span> 蝴蝶飞舞 - 翅膀拍打</div>
+            <div class="feature-item"><span class="emoji">✨</span> 萤火虫群 - 忽明忽暗</div>
+            <div class="feature-item"><span class="emoji">🌌</span> 极光效果 - 波浪流动</div>
+            <div class="feature-item"><span class="emoji">🌠</span> 星系旋转 - 螺旋星云</div>
+            <div class="feature-item"><span class="emoji">🌌</span> 宇宙背景 - 渐变星空</div>
+            <div class="feature-item"><span class="emoji">📸</span> 截图功能 - 保存作品</div>
         </div>
     </div>
 </body>
