@@ -1,6 +1,6 @@
 {
   "name": "3d-particle-art-system",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "description": "Multi-modal 3D particle art generation system with LLM-driven JSON control",
   "main": "src/main.js",
@@ -15,12 +15,16 @@
     "webgl",
     "3d",
     "art",
-    "generative"
+    "generative",
+    "ai",
+    "gemini",
+    "llm"
   ],
   "author": "chrischen003",
   "license": "MIT",
   "dependencies": {
-    "three": "^0.160.0"
+    "three": "^0.160.0",
+    "@google/generative-ai": "^0.21.0"
   },
   "devDependencies": {
     "vite": "^5.0.0"

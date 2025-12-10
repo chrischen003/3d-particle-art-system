@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Particle Art System</title>
+    <title>3D Particle Art System - AI Powered</title>
     <style>
         * {
             margin: 0;
@@ -27,19 +27,29 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
             padding: 20px;
             border-radius: 10px;
             color: white;
-            max-width: 300px;
+            max-width: 320px;
             backdrop-filter: blur(10px);
             z-index: 100;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         h1 {
             font-size: 18px;
             margin-bottom: 15px;
             color: #fff;
+        }
+        
+        h2 {
+            font-size: 14px;
+            margin: 20px 0 10px 0;
+            color: #00ff88;
+            border-bottom: 1px solid #00ff88;
+            padding-bottom: 5px;
         }
         
         .control-group {
@@ -53,7 +63,7 @@
             color: #ccc;
         }
         
-        select, input[type="color"], input[type="range"] {
+        select, input[type="color"], input[type="range"], input[type="text"], textarea {
             width: 100%;
             padding: 8px;
             border: none;
@@ -61,6 +71,17 @@
             background: rgba(255, 255, 255, 0.1);
             color: white;
             cursor: pointer;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+        }
+        
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
         
         select {
@@ -74,39 +95,6 @@
         
         input[type="range"] {
             padding: 0;
-        }
-        
-        .info {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            color: white;
-            font-size: 12px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .json-display {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            max-width: 350px;
-            max-height: 400px;
-            overflow-y: auto;
-            backdrop-filter: blur(10px);
-        }
-        
-        .json-display pre {
-            margin: 0;
-            white-space: pre-wrap;
         }
         
         button {
@@ -129,18 +117,214 @@
         button:active {
             transform: scale(0.95);
         }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .json-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 15px;
+            border-radius: 10px;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        
+        .json-display pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .ai-section {
+            border-top: 2px solid #00ff88;
+            padding-top: 15px;
+        }
+
+        .example-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .example-btn {
+            padding: 8px;
+            font-size: 11px;
+            margin: 0;
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        .ai-status {
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .ai-status.success {
+            background: rgba(0, 255, 0, 0.2);
+            color: #0f0;
+        }
+
+        .ai-status.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #f00;
+        }
+
+        .ai-status.warning {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+
+        .ai-status.processing {
+            background: rgba(0, 191, 255, 0.2);
+            color: #00bfff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-left: 10px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #667eea;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #00ff88;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .model-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #ccc;
+        }
+
+        .api-key-group {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .api-key-group small {
+            display: block;
+            color: #888;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .api-key-group a {
+            color: #00ff88;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
     <div id="canvas-container"></div>
     
     <div id="controls">
-        <h1>🌟 3D Particle Art</h1>
+        <h1>🌟 3D Particle Art - AI Powered</h1>
+        
+        <!-- AI Section -->
+        <div class="ai-section">
+            <h2>🤖 AI Text-to-Particle</h2>
+            
+            <div class="api-key-group">
+                <label>Google AI API Key</label>
+                <input type="text" id="api-key-input" placeholder="Enter your Gemini API Key">
+                <button id="save-key-btn">💾 Save Key</button>
+                <small>Get your free API key at <a href="https://ai.google.dev/" target="_blank">ai.google.dev</a></small>
+            </div>
+
+            <div class="model-selector">
+                <span>Flash ⚡</span>
+                <label class="switch">
+                    <input type="checkbox" id="model-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Pro 🧠</span>
+            </div>
+
+            <div class="control-group">
+                <label>Describe your particle effect</label>
+                <textarea id="ai-input" placeholder="例如：创建浪漫的紫色烟花效果..." disabled></textarea>
+                <button id="send-btn" disabled>✨ Generate</button>
+            </div>
+
+            <div class="example-buttons">
+                <button class="example-btn" data-prompt="浪漫的紫色烟花 💜">💜 烟花</button>
+                <button class="example-btn" data-prompt="缓慢飘落的金色雪花 ⛄">⛄ 雪花</button>
+                <button class="example-btn" data-prompt="科幻感的蓝色粒子球体 🌌">🌌 科幻</button>
+                <button class="example-btn" data-prompt="火焰般的红色烟雾 🔥">🔥 火焰</button>
+            </div>
+
+            <div id="ai-status" class="ai-status">⚠️ Enter API Key to start</div>
+        </div>
+
+        <h2>🎨 Manual Controls</h2>
         
         <div class="control-group">
             <label>Particle Type (粒子类型)</label>
             <select id="particle-type">
-                <option value="snowflake">❄️ Snowflake (雪花)</option>
+                <option value="snowflake">⛄ Snowflake (雪花)</option>
                 <option value="smoke">💨 Smoke (烟雾)</option>
                 <option value="firework">🎆 Firework (烟花)</option>
                 <option value="sphere">🔵 Sphere (球体)</option>
@@ -177,8 +361,9 @@
     </div>
     
     <div class="info">
-        <div>🖄️ Drag to rotate</div>
+        <div>🖱️ Drag to rotate</div>
         <div>🔍 Scroll to zoom</div>
+        <div style="margin-top: 10px; color: #00ff88;">✨ AI-Powered by Gemini</div>
     </div>
     
     <script type="module" src="/src/main.js"></script>

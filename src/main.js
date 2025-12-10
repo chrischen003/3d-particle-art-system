@@ -2,10 +2,14 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ParticleSystem } from './ParticleSystem.js';
 import { particleConfigs } from './particleConfigs.js';
+import { AIController } from './AIController.js';
+import { PromptEngine } from './PromptEngine.js';
 
 let scene, camera, renderer, controls;
 let particleSystem;
 let currentConfig;
+let aiController;
+let promptEngine;
 
 // Initialize Three.js scene
 function init() {
@@ -49,8 +53,12 @@ function init() {
     currentConfig = JSON.parse(JSON.stringify(particleConfigs.snowflake));
     particleSystem = new ParticleSystem(scene, currentConfig);
 
+    // Initialize AI components
+    promptEngine = new PromptEngine();
+
     // Setup controls
     setupControls();
+    setupAIControls();
     updateJSONDisplay();
 
     // Handle window resize
@@ -76,7 +84,6 @@ function setupControls() {
     typeSelect.addEventListener('change', (e) => {
         const newConfig = JSON.parse(JSON.stringify(particleConfigs[e.target.value]));
         
-        // Preserve user adjustments
         newConfig.count = currentConfig.count;
         newConfig.appearance.size = currentConfig.appearance.size;
         newConfig.physics.speed = currentConfig.physics.speed;
@@ -84,7 +91,6 @@ function setupControls() {
         currentConfig = newConfig;
         particleSystem.updateConfig(currentConfig);
         
-        // Update color picker
         colorPicker.value = currentConfig.appearance.color;
         
         updateJSONDisplay();
@@ -130,6 +136,125 @@ function setupControls() {
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
     });
+}
+
+function setupAIControls() {
+    const apiKeyInput = document.getElementById('api-key-input');
+    const saveKeyBtn = document.getElementById('save-key-btn');
+    const aiInput = document.getElementById('ai-input');
+    const sendBtn = document.getElementById('send-btn');
+    const exampleBtns = document.querySelectorAll('.example-btn');
+    const aiStatus = document.getElementById('ai-status');
+    const modelToggle = document.getElementById('model-toggle');
+
+    // Load saved API key
+    const savedKey = localStorage.getItem('gemini_api_key');
+    if (savedKey) {
+        apiKeyInput.value = savedKey;
+        initializeAI(savedKey);
+    }
+
+    // Save API key
+    saveKeyBtn.addEventListener('click', () => {
+        const apiKey = apiKeyInput.value.trim();
+        if (apiKey) {
+            localStorage.setItem('gemini_api_key', apiKey);
+            initializeAI(apiKey);
+        }
+    });
+
+    // Send AI request
+    sendBtn.addEventListener('click', () => handleAIRequest());
+    aiInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleAIRequest();
+        }
+    });
+
+    // Example buttons
+    exampleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            aiInput.value = btn.dataset.prompt;
+            handleAIRequest();
+        });
+    });
+
+    // Model toggle
+    modelToggle.addEventListener('change', (e) => {
+        if (aiController) {
+            aiController.switchModel(e.target.checked ? 'pro' : 'flash');
+            updateAIStatus(`Switched to ${e.target.checked ? 'Gemini 3 Pro' : 'Gemini 2.0 Flash'}`);
+        }
+    });
+}
+
+function initializeAI(apiKey) {
+    try {
+        aiController = new AIController(apiKey);
+        updateAIStatus('✅ AI Ready', 'success');
+        document.getElementById('ai-input').disabled = false;
+        document.getElementById('send-btn').disabled = false;
+    } catch (error) {
+        updateAIStatus('❌ Invalid API Key', 'error');
+    }
+}
+
+async function handleAIRequest() {
+    if (!aiController) {
+        updateAIStatus('⚠️ Please enter API Key first', 'warning');
+        return;
+    }
+
+    const aiInput = document.getElementById('ai-input');
+    const userInput = aiInput.value.trim();
+    
+    if (!userInput) return;
+
+    try {
+        updateAIStatus('🤔 AI is thinking...', 'processing');
+        document.getElementById('send-btn').disabled = true;
+
+        const newConfig = await aiController.generateParticleConfig(userInput, currentConfig);
+        
+        currentConfig = newConfig;
+        particleSystem.updateConfig(currentConfig);
+        updateJSONDisplay();
+        updateControlsFromConfig();
+        
+        updateAIStatus(`✅ Generated (${aiController.currentModel === 'pro' ? 'Pro' : 'Flash'})`, 'success');
+        aiInput.value = '';
+
+    } catch (error) {
+        console.error('AI Error:', error);
+        updateAIStatus('❌ ' + error.message, 'error');
+    } finally {
+        document.getElementById('send-btn').disabled = false;
+    }
+}
+
+function updateAIStatus(message, type = 'info') {
+    const statusEl = document.getElementById('ai-status');
+    statusEl.textContent = message;
+    statusEl.className = `ai-status ${type}`;
+}
+
+function updateControlsFromConfig() {
+    const typeSelect = document.getElementById('particle-type');
+    const colorPicker = document.getElementById('color-picker');
+    const countSlider = document.getElementById('particle-count');
+    const sizeSlider = document.getElementById('particle-size');
+    const speedSlider = document.getElementById('particle-speed');
+
+    typeSelect.value = currentConfig.type;
+    colorPicker.value = currentConfig.appearance.color;
+    countSlider.value = currentConfig.count;
+    sizeSlider.value = currentConfig.appearance.size;
+    speedSlider.value = currentConfig.physics.speed;
+
+    document.getElementById('count-value').textContent = currentConfig.count;
+    document.getElementById('size-value').textContent = currentConfig.appearance.size;
+    document.getElementById('speed-value').textContent = currentConfig.physics.speed;
 }
 
 function updateJSONDisplay() {
