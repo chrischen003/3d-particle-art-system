@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Particle Art System - AI Powered</title>
+    <title>3D Particle Art System</title>
     <meta http-equiv="refresh" content="0; url=./index-standalone.html">
     <style>
         body {
             margin: 0;
             padding: 0;
-            background: #000;
-            color: #0f0;
-            font-family: monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -19,36 +19,75 @@
             text-align: center;
         }
         .redirect {
-            padding: 40px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 2px solid #00ff88;
-            border-radius: 10px;
+            padding: 50px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #00ff88;
+            border-radius: 20px;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
         }
         h1 {
             color: #00ff88;
             margin-bottom: 20px;
+            font-size: 32px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
         p {
-            margin: 10px 0;
+            margin: 15px 0;
+            font-size: 16px;
+            line-height: 1.6;
         }
         a {
             color: #00ff88;
             text-decoration: none;
             font-weight: bold;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s;
         }
         a:hover {
-            text-decoration: underline;
+            background: #00ff88;
+            color: #000;
+            transform: scale(1.05);
+        }
+        .note {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        .success {
+            color: #00ff88;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="redirect">
-        <h1>🚀 Redirecting...</h1>
-        <p>You will be redirected to the standalone version.</p>
-        <p>If not, please click: <a href="./index-standalone.html">index-standalone.html</a></p>
-        <p style="margin-top: 20px; color: #ccc; font-size: 12px;">
-            The standalone version has 100% particle visibility guaranteed.
-        </p>
+        <h1>🎉 成功！</h1>
+        <p>🚀 正在跳转到工作版本...</p>
+        <p>如果没有自动跳转，请点击：</p>
+        <a href="./index-standalone.html">✨ 进入 3D 粒子系统</a>
+        
+        <div class="note">
+            <div class="success">✅ 使用 unpkg CDN</div>
+            <div class="success">✅ 保证可见性</div>
+            <div class="success">✅ 支持完整交互</div>
+            <div style="margin-top: 15px;">
+                基于您的测试结果优化，
+                <br>simple.html 已验证可用 ✅
+            </div>
+        </div>
     </div>
 </body>
 </html>
