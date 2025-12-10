@@ -15,7 +15,7 @@ let promptEngine;
 function init() {
     // Create scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000);
+    scene.background = new THREE.Color(0x000000); // 黑色背景
     scene.fog = new THREE.FogExp2(0x000000, 0.001);
 
     // Create camera
@@ -28,7 +28,7 @@ function init() {
     camera.position.z = 5;
 
     // Create renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
@@ -154,12 +154,22 @@ function setupAIControls() {
         initializeAI(savedKey);
     }
 
-    // Save API key
+    // Save API key - 修复：确保输入后启用控件
     saveKeyBtn.addEventListener('click', () => {
         const apiKey = apiKeyInput.value.trim();
         if (apiKey) {
             localStorage.setItem('gemini_api_key', apiKey);
             initializeAI(apiKey);
+        } else {
+            updateAIStatus('⚠️ Please enter a valid API Key', 'warning');
+        }
+    });
+
+    // 修复：Enter 键也能保存 API Key
+    apiKeyInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveKeyBtn.click();
         }
     });
 
@@ -190,13 +200,26 @@ function setupAIControls() {
 }
 
 function initializeAI(apiKey) {
+    const aiInput = document.getElementById('ai-input');
+    const sendBtn = document.getElementById('send-btn');
+    
     try {
+        // 尝试初始化 AI
         aiController = new AIController(apiKey);
-        updateAIStatus('✅ AI Ready', 'success');
-        document.getElementById('ai-input').disabled = false;
-        document.getElementById('send-btn').disabled = false;
+        
+        // 成功：启用控件
+        aiInput.disabled = false;
+        sendBtn.disabled = false;
+        updateAIStatus('✅ AI Ready - Start typing!', 'success');
+        
+        console.log('✅ AI Controller initialized successfully');
+        
     } catch (error) {
-        updateAIStatus('❌ Invalid API Key', 'error');
+        // 失败：保持禁用状态
+        console.error('AI Initialization Error:', error);
+        aiInput.disabled = true;
+        sendBtn.disabled = true;
+        updateAIStatus('❌ Invalid API Key - Please check and try again', 'error');
     }
 }
 
@@ -207,13 +230,18 @@ async function handleAIRequest() {
     }
 
     const aiInput = document.getElementById('ai-input');
+    const sendBtn = document.getElementById('send-btn');
     const userInput = aiInput.value.trim();
     
-    if (!userInput) return;
+    if (!userInput) {
+        updateAIStatus('⚠️ Please enter a description', 'warning');
+        return;
+    }
 
     try {
         updateAIStatus('🤔 AI is thinking...', 'processing');
-        document.getElementById('send-btn').disabled = true;
+        sendBtn.disabled = true;
+        aiInput.disabled = true;
 
         const newConfig = await aiController.generateParticleConfig(userInput, currentConfig);
         
@@ -222,14 +250,29 @@ async function handleAIRequest() {
         updateJSONDisplay();
         updateControlsFromConfig();
         
-        updateAIStatus(`✅ Generated (${aiController.currentModel === 'pro' ? 'Pro' : 'Flash'})`, 'success');
+        const modelName = aiController.currentModel === 'pro' ? 'Pro 🧠' : 'Flash ⚡';
+        updateAIStatus(`✅ Generated with ${modelName}`, 'success');
         aiInput.value = '';
 
     } catch (error) {
-        console.error('AI Error:', error);
-        updateAIStatus('❌ ' + error.message, 'error');
+        console.error('AI Generation Error:', error);
+        
+        // 友好的错误提示
+        let errorMsg = '❌ Generation failed';
+        if (error.message.includes('API')) {
+            errorMsg = '❌ API Error - Check your key';
+        } else if (error.message.includes('network')) {
+            errorMsg = '❌ Network Error - Check connection';
+        } else if (error.message.includes('quota')) {
+            errorMsg = '❌ Quota exceeded - Try again later';
+        }
+        
+        updateAIStatus(errorMsg, 'error');
+        
     } finally {
-        document.getElementById('send-btn').disabled = false;
+        sendBtn.disabled = false;
+        aiInput.disabled = false;
+        aiInput.focus();
     }
 }
 

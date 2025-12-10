@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000000;
             overflow: hidden;
         }
         
@@ -21,6 +21,7 @@
             width: 100vw;
             height: 100vh;
             position: relative;
+            background: #000000;
         }
         
         #controls {
@@ -110,17 +111,18 @@
             transition: transform 0.2s;
         }
         
-        button:hover {
+        button:hover:not(:disabled) {
             transform: scale(1.05);
         }
         
-        button:active {
+        button:active:not(:disabled) {
             transform: scale(0.95);
         }
         
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            background: rgba(102, 126, 234, 0.3);
         }
         
         .info {
@@ -289,7 +291,7 @@
             
             <div class="api-key-group">
                 <label>Google AI API Key</label>
-                <input type="text" id="api-key-input" placeholder="Enter your Gemini API Key">
+                <input type="text" id="api-key-input" placeholder="AIza..." value="***REMOVED***">
                 <button id="save-key-btn">💾 Save Key</button>
                 <small>Get your free API key at <a href="https://ai.google.dev/" target="_blank">ai.google.dev</a></small>
             </div>
@@ -316,7 +318,7 @@
                 <button class="example-btn" data-prompt="火焰般的红色烟雾 🔥">🔥 火焰</button>
             </div>
 
-            <div id="ai-status" class="ai-status">⚠️ Enter API Key to start</div>
+            <div id="ai-status" class="ai-status">⚠️ Click Save Key to start</div>
         </div>
 
         <h2>🎨 Manual Controls</h2>
