@@ -43,6 +43,18 @@
             font-size: 18px;
             margin-bottom: 15px;
             color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .settings-btn {
+            width: auto;
+            padding: 5px 10px;
+            margin: 0;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
         }
         
         h2 {
@@ -64,7 +76,7 @@
             color: #ccc;
         }
         
-        select, input[type="color"], input[type="range"], input[type="text"], textarea {
+        select, input[type="color"], input[type="range"], input[type="text"], input[type="password"], textarea {
             width: 100%;
             padding: 8px;
             border: none;
@@ -81,6 +93,7 @@
         }
         
         input[type="text"]::placeholder,
+        input[type="password"]::placeholder,
         textarea::placeholder {
             color: rgba(255, 255, 255, 0.5);
         }
@@ -259,21 +272,85 @@
             color: #ccc;
         }
 
-        .api-key-group {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px;
-            border-radius: 5px;
+        /* 设置弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);
+            border: 1px solid #00ff88;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            border: none;
+            padding: 0;
+        }
+
+        .close-btn {
+            width: auto;
+            padding: 5px 15px;
+            margin: 0;
+            background: rgba(255, 0, 0, 0.3);
+            font-size: 18px;
+        }
+
+        .api-key-input-group {
+            position: relative;
             margin-bottom: 15px;
         }
 
-        .api-key-group small {
-            display: block;
-            color: #888;
-            font-size: 10px;
-            margin-top: 5px;
+        .toggle-visibility {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            background: none;
+            border: none;
+            color: #00ff88;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+            margin: 0;
+            font-size: 14px;
         }
 
-        .api-key-group a {
+        .modal-info {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 15px;
+        }
+
+        .modal-info a {
             color: #00ff88;
             text-decoration: none;
         }
@@ -282,19 +359,43 @@
 <body>
     <div id="canvas-container"></div>
     
+    <!-- 设置弹窗 -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ API Settings</h2>
+                <button class="close-btn" id="close-modal">✕</button>
+            </div>
+            
+            <div class="api-key-input-group">
+                <label>Google Gemini API Key</label>
+                <input type="password" id="api-key-input" placeholder="Enter your API key here">
+                <button class="toggle-visibility" id="toggle-key-visibility">👁️</button>
+            </div>
+            
+            <button id="save-key-btn">💾 Save API Key</button>
+            
+            <div class="modal-info">
+                <strong>📌 How to get API Key:</strong><br>
+                1. Visit <a href="https://ai.google.dev/" target="_blank">ai.google.dev</a><br>
+                2. Sign in with Google account<br>
+                3. Click "Get API Key"<br>
+                4. Copy and paste it here<br>
+                <br>
+                <strong>🎁 Free quota:</strong> 1500 requests/day
+            </div>
+        </div>
+    </div>
+    
     <div id="controls">
-        <h1>🌟 3D Particle Art - AI Powered</h1>
+        <h1>
+            <span>🌟 3D Particle Art</span>
+            <button class="settings-btn" id="open-settings">⚙️</button>
+        </h1>
         
         <!-- AI Section -->
         <div class="ai-section">
             <h2>🤖 AI Text-to-Particle</h2>
-            
-            <div class="api-key-group">
-                <label>Google AI API Key</label>
-                <input type="text" id="api-key-input" placeholder="AIza..." value="***REMOVED***">
-                <button id="save-key-btn">💾 Save Key</button>
-                <small>Get your free API key at <a href="https://ai.google.dev/" target="_blank">ai.google.dev</a></small>
-            </div>
 
             <div class="model-selector">
                 <span>Flash ⚡</span>
@@ -318,7 +419,7 @@
                 <button class="example-btn" data-prompt="火焰般的红色烟雾 🔥">🔥 火焰</button>
             </div>
 
-            <div id="ai-status" class="ai-status">⚠️ Click Save Key to start</div>
+            <div id="ai-status" class="ai-status warning">⚠️ Click ⚙️ to configure API Key</div>
         </div>
 
         <h2>🎨 Manual Controls</h2>

@@ -8,14 +8,14 @@ import { PromptEngine } from './PromptEngine.js';
 let scene, camera, renderer, controls;
 let particleSystem;
 let currentConfig;
-let aiController;
+let aiController = null;
 let promptEngine;
 
 // Initialize Three.js scene
 function init() {
     // Create scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000); // 黑色背景
+    scene.background = new THREE.Color(0x000000);
     scene.fog = new THREE.FogExp2(0x000000, 0.001);
 
     // Create camera
@@ -59,13 +59,82 @@ function init() {
     // Setup controls
     setupControls();
     setupAIControls();
+    setupModal();
     updateJSONDisplay();
+
+    // Check for saved API key and auto-initialize
+    const savedKey = localStorage.getItem('gemini_api_key');
+    if (savedKey) {
+        console.log('Found saved API key, initializing...');
+        initializeAI(savedKey);
+    }
 
     // Handle window resize
     window.addEventListener('resize', onWindowResize, false);
 
     // Start animation
     animate();
+}
+
+function setupModal() {
+    const modal = document.getElementById('settings-modal');
+    const openBtn = document.getElementById('open-settings');
+    const closeBtn = document.getElementById('close-modal');
+    const apiKeyInput = document.getElementById('api-key-input');
+    const toggleVisibilityBtn = document.getElementById('toggle-key-visibility');
+    const saveKeyBtn = document.getElementById('save-key-btn');
+
+    // Open modal
+    openBtn.addEventListener('click', () => {
+        modal.classList.add('show');
+        // Load saved key
+        const savedKey = localStorage.getItem('gemini_api_key');
+        if (savedKey) {
+            apiKeyInput.value = savedKey;
+        }
+    });
+
+    // Close modal
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('show');
+        }
+    });
+
+    // Toggle password visibility
+    toggleVisibilityBtn.addEventListener('click', () => {
+        if (apiKeyInput.type === 'password') {
+            apiKeyInput.type = 'text';
+            toggleVisibilityBtn.textContent = '🙈';
+        } else {
+            apiKeyInput.type = 'password';
+            toggleVisibilityBtn.textContent = '👁️';
+        }
+    });
+
+    // Save API key
+    saveKeyBtn.addEventListener('click', () => {
+        const apiKey = apiKeyInput.value.trim();
+        if (apiKey) {
+            localStorage.setItem('gemini_api_key', apiKey);
+            initializeAI(apiKey);
+            modal.classList.remove('show');
+        } else {
+            alert('Please enter a valid API Key');
+        }
+    });
+
+    // Enter to save
+    apiKeyInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            saveKeyBtn.click();
+        }
+    });
 }
 
 function setupControls() {
@@ -76,23 +145,18 @@ function setupControls() {
     const speedSlider = document.getElementById('particle-speed');
     const exportBtn = document.getElementById('export-json');
 
-    // Update displays
     const countValue = document.getElementById('count-value');
     const sizeValue = document.getElementById('size-value');
     const speedValue = document.getElementById('speed-value');
 
     typeSelect.addEventListener('change', (e) => {
         const newConfig = JSON.parse(JSON.stringify(particleConfigs[e.target.value]));
-        
         newConfig.count = currentConfig.count;
         newConfig.appearance.size = currentConfig.appearance.size;
         newConfig.physics.speed = currentConfig.physics.speed;
-        
         currentConfig = newConfig;
         particleSystem.updateConfig(currentConfig);
-        
         colorPicker.value = currentConfig.appearance.color;
-        
         updateJSONDisplay();
     });
 
@@ -130,7 +194,6 @@ function setupControls() {
         const dataStr = JSON.stringify(currentConfig, null, 2);
         const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
         const exportFileDefaultName = `particle-config-${currentConfig.type}.json`;
-        
         const linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
@@ -139,42 +202,13 @@ function setupControls() {
 }
 
 function setupAIControls() {
-    const apiKeyInput = document.getElementById('api-key-input');
-    const saveKeyBtn = document.getElementById('save-key-btn');
     const aiInput = document.getElementById('ai-input');
     const sendBtn = document.getElementById('send-btn');
     const exampleBtns = document.querySelectorAll('.example-btn');
-    const aiStatus = document.getElementById('ai-status');
     const modelToggle = document.getElementById('model-toggle');
 
-    // Load saved API key
-    const savedKey = localStorage.getItem('gemini_api_key');
-    if (savedKey) {
-        apiKeyInput.value = savedKey;
-        initializeAI(savedKey);
-    }
-
-    // Save API key - 修复：确保输入后启用控件
-    saveKeyBtn.addEventListener('click', () => {
-        const apiKey = apiKeyInput.value.trim();
-        if (apiKey) {
-            localStorage.setItem('gemini_api_key', apiKey);
-            initializeAI(apiKey);
-        } else {
-            updateAIStatus('⚠️ Please enter a valid API Key', 'warning');
-        }
-    });
-
-    // 修复：Enter 键也能保存 API Key
-    apiKeyInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            saveKeyBtn.click();
-        }
-    });
-
-    // Send AI request
     sendBtn.addEventListener('click', () => handleAIRequest());
+    
     aiInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -182,19 +216,22 @@ function setupAIControls() {
         }
     });
 
-    // Example buttons
     exampleBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            if (!aiController) {
+                updateAIStatus('⚠️ Please configure API Key first', 'warning');
+                document.getElementById('open-settings').click();
+                return;
+            }
             aiInput.value = btn.dataset.prompt;
             handleAIRequest();
         });
     });
 
-    // Model toggle
     modelToggle.addEventListener('change', (e) => {
         if (aiController) {
             aiController.switchModel(e.target.checked ? 'pro' : 'flash');
-            updateAIStatus(`Switched to ${e.target.checked ? 'Gemini 3 Pro' : 'Gemini 2.0 Flash'}`);
+            updateAIStatus(`Switched to ${e.target.checked ? 'Gemini 3 Pro' : 'Gemini 2.0 Flash'}`, 'success');
         }
     });
 }
@@ -203,29 +240,30 @@ function initializeAI(apiKey) {
     const aiInput = document.getElementById('ai-input');
     const sendBtn = document.getElementById('send-btn');
     
+    console.log('Initializing AI with API key...');
+    
     try {
-        // 尝试初始化 AI
         aiController = new AIController(apiKey);
         
-        // 成功：启用控件
         aiInput.disabled = false;
         sendBtn.disabled = false;
-        updateAIStatus('✅ AI Ready - Start typing!', 'success');
         
-        console.log('✅ AI Controller initialized successfully');
+        updateAIStatus('✅ AI Ready - Start creating!', 'success');
+        console.log('✅ AI initialized successfully');
         
     } catch (error) {
-        // 失败：保持禁用状态
-        console.error('AI Initialization Error:', error);
+        console.error('❌ AI initialization failed:', error);
+        aiController = null;
         aiInput.disabled = true;
         sendBtn.disabled = true;
-        updateAIStatus('❌ Invalid API Key - Please check and try again', 'error');
+        updateAIStatus('❌ Failed to initialize AI', 'error');
     }
 }
 
 async function handleAIRequest() {
     if (!aiController) {
-        updateAIStatus('⚠️ Please enter API Key first', 'warning');
+        updateAIStatus('⚠️ Please configure API Key first', 'warning');
+        document.getElementById('open-settings').click();
         return;
     }
 
@@ -243,7 +281,9 @@ async function handleAIRequest() {
         sendBtn.disabled = true;
         aiInput.disabled = true;
 
+        console.log('Generating config for:', userInput);
         const newConfig = await aiController.generateParticleConfig(userInput, currentConfig);
+        console.log('Generated config:', newConfig);
         
         currentConfig = newConfig;
         particleSystem.updateConfig(currentConfig);
@@ -255,14 +295,11 @@ async function handleAIRequest() {
         aiInput.value = '';
 
     } catch (error) {
-        console.error('AI Generation Error:', error);
+        console.error('❌ AI Generation Error:', error);
         
-        // 友好的错误提示
         let errorMsg = '❌ Generation failed';
-        if (error.message.includes('API')) {
-            errorMsg = '❌ API Error - Check your key';
-        } else if (error.message.includes('network')) {
-            errorMsg = '❌ Network Error - Check connection';
+        if (error.message.includes('API') || error.message.includes('key')) {
+            errorMsg = '❌ Invalid API Key - Check settings';
         } else if (error.message.includes('quota')) {
             errorMsg = '❌ Quota exceeded - Try again later';
         }
@@ -313,15 +350,11 @@ function onWindowResize() {
 
 function animate() {
     requestAnimationFrame(animate);
-    
     controls.update();
-    
     if (particleSystem) {
         particleSystem.update();
     }
-    
     renderer.render(scene, camera);
 }
 
-// Start the app
 init();
